@@ -10,7 +10,8 @@ using std::endl;
 using std::cin;
 
 class IndexOutOfBoundsException
-{};
+{
+};
 
 template <typename T>
 class Array
@@ -26,7 +27,7 @@ public:
 	{
 		if (size != 0)
 		{
-			m_ptr = new T[size] {};
+			m_ptr = new T[size]{};
 			m_size = size;
 		}
 	}
@@ -37,7 +38,7 @@ public:
 		{
 			m_size = source.m_size;
 
-			m_ptr = new T[m_size] {};
+			m_ptr = new T[m_size]{};
 			for (int i = 0; i < m_size; i++)
 			{
 				m_ptr[i] = source.m_ptr[i];
@@ -113,12 +114,13 @@ int main()
 	a[2] = 30;
 
 	Array<int> b = a;
+	GenericArray<int> d{ 4 };
 
 	cout << "a = " << a << endl;
 	cout << "b = " << b << endl;
 
 	b[1] = 100;
-	
+
 	cout << "a = " << a << endl;
 	cout << "b = " << b << endl;
 }
@@ -130,6 +132,73 @@ private:
 
 	T *m_elements = nullptr;
 	int m_size = 0;
+
+	bool IsEmpty() const
+	{
+		return (m_size == 0)
+	}
+
+	bool IsValidIndex(int index) const
+	{
+		return (index >= 0) && (index < m_size);
+	}
+
+	bool ChangeArraySize(int size)
+	{
+		try
+		{
+			T *tempArr = m_elements;
+
+			m_elements = new T*[size] {};
+			m_size = size;
+
+			for (int i = 0; i < m_size - 1; i++)
+			{
+				m_elements[i] = tempArr[i];
+			}
+
+			delete[] tempArr;
+
+			return true;
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+	}
+
+	friend void Swap(GenericArray& a, GenericArray& b) noexcept
+	{
+		std::swap(a.m_elements, b.m_elements);
+		std::swap(a.m_size, b.m_size);
+	}
+
+	GenericArray& operator=(GenericArray source)
+	{
+		Swap(*this, source);
+
+		return *this;
+	}
+
+	T& operator[](int index)
+	{
+		if (!IsValidIndex(index))
+		{
+			throw IndexOutOfBoundsException{};
+		}
+
+		return m_elements[index];
+	}
+
+	T operator[](int index) const
+	{
+		if (!IsValidIndex(index))
+		{
+			throw IndexOutOfBoundsException{};
+		}
+
+		return m_elements[index];
+	}
 
 public:
 
@@ -175,19 +244,20 @@ public:
 		return m_size;
 	}
 
-	bool IsEmpty() const
-	{
-		return (m_size == 0)
-	}
-
-	bool IsValidIndex(int index) const
-	{
-		return (index >= 0) && (index < m_size);
-	}
-
 	bool Add(T& element)
 	{
+		int index = m_size + 1;
 
+		if (ChangeArraySize(index))
+		{
+			m_elements[index - 1] = element;
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	bool RemoveAt(int index)
@@ -198,19 +268,6 @@ public:
 	bool Remove(T& element)
 	{
 
-	}
-
-	friend void Swap(GenericArray& a, GenericArray& b) noexcept
-	{
-		std::swap(a.m_elements, b.m_elements);
-		std::swap(a.m_size, b.m_size);
-	}
-
-	GenericArray& operator=(Array source)
-	{
-		Swap(*this, source);
-
-		return *this;
 	}
 
 	int Find(const T element)
@@ -226,7 +283,7 @@ public:
 		return -1;
 	}
 
-	T& Find(const T element)
+	T& FindElement(const T element)
 	{
 		for (int i = 0; i < Size(); i++)
 		{
@@ -237,26 +294,6 @@ public:
 		}
 
 		return nullptr;
-	}
-
-	T& operator[](int index)
-	{
-		if (!IsValidIndex(index))
-		{
-			throw IndexOutOfBoundsException{};
-		}
-
-		return m_elements[index];
-	}
-
-	T operator[](int index) const
-	{
-		if (!IsValidIndex(index))
-		{
-			throw IndexOutOfBoundsException{};
-		}
-
-		return m_elements[index];
 	}
 
 };
