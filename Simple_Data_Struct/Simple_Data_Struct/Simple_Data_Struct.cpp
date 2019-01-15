@@ -106,25 +106,6 @@ public:
 	}
 };
 
-int main()
-{
-	Array<int> a{ 3 };
-	a[0] = 10;
-	a[1] = 20;
-	a[2] = 30;
-
-	Array<int> b = a;
-	GenericArray<int> d{ 4 };
-
-	cout << "a = " << a << endl;
-	cout << "b = " << b << endl;
-
-	b[1] = 100;
-
-	cout << "a = " << a << endl;
-	cout << "b = " << b << endl;
-}
-
 template <typename T>
 class GenericArray
 {
@@ -135,7 +116,7 @@ private:
 
 	bool IsEmpty() const
 	{
-		return (m_size == 0)
+		return (m_size == 0);
 	}
 
 	bool IsValidIndex(int index) const
@@ -149,7 +130,7 @@ private:
 		{
 			T *tempArr = m_elements;
 
-			m_elements = new T*[size] {};
+			m_elements = new T[size] {};
 			m_size = size;
 
 			for (int i = 0; i < m_size - 1; i++)
@@ -171,33 +152,6 @@ private:
 	{
 		std::swap(a.m_elements, b.m_elements);
 		std::swap(a.m_size, b.m_size);
-	}
-
-	GenericArray& operator=(GenericArray source)
-	{
-		Swap(*this, source);
-
-		return *this;
-	}
-
-	T& operator[](int index)
-	{
-		if (!IsValidIndex(index))
-		{
-			throw IndexOutOfBoundsException{};
-		}
-
-		return m_elements[index];
-	}
-
-	T operator[](int index) const
-	{
-		if (!IsValidIndex(index))
-		{
-			throw IndexOutOfBoundsException{};
-		}
-
-		return m_elements[index];
 	}
 
 public:
@@ -246,11 +200,11 @@ public:
 
 	bool Add(T& element)
 	{
-		int index = m_size + 1;
+		int newSize = m_size + 1;
 
-		if (ChangeArraySize(index))
+		if (ChangeArraySize(newSize))
 		{
-			m_elements[index - 1] = element;
+			m_elements[newSize - 1] = element;
 
 			return true;
 		}
@@ -267,7 +221,16 @@ public:
 
 	bool Remove(T& element)
 	{
+		ChangeArraySize(m_size - 1);
+	}
 
+	bool Remove()
+	{
+		if (ChangeArraySize(m_size - 1))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	int Find(const T element)
@@ -289,12 +252,62 @@ public:
 		{
 			if (m_elements[i] == element)
 			{
-				return arr[i];
+				return m_elements[i];
 			}
 		}
 
 		return nullptr;
 	}
 
+	GenericArray& operator=(GenericArray source)
+	{
+		Swap(*this, source);
+
+		return *this;
+	}
+
+	T& operator[](int index)
+	{
+		if (!IsValidIndex(index))
+		{
+			throw IndexOutOfBoundsException{};
+		}
+
+		return m_elements[index];
+	}
+
+	T operator[](int index) const
+	{
+		if (!IsValidIndex(index))
+		{
+			throw IndexOutOfBoundsException{};
+		}
+
+		return m_elements[index];
+	}
+
 };
 
+int main()
+{
+	GenericArray<int> arr{};
+
+	for (int i = 0; i < 50; i++)
+	{
+		int t = i + 1;
+		arr.Add(t);
+	}
+
+	for (int i = 0; i < arr.Size(); i++)
+	{
+		cout << arr[i] << endl;
+	}
+
+	arr.Remove();
+
+	cout << "Removed" << endl;
+	for (int i = 0; i < arr.Size(); i++)
+	{
+		cout << arr[i] << endl;
+	}
+}

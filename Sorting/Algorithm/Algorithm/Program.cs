@@ -14,19 +14,21 @@ namespace Algorithm
 
             Console.WriteLine("Skriv in storleken på den array av heltal som skall sorteras: ");
             int size = Convert.ToInt32(Console.ReadLine());
+
             Console.WriteLine("Skall talen skrivas ut? (y/n)");
             string print = Console.ReadLine();
+
             Console.WriteLine("Skapar slumpad data av längd " + size);
             int[] data = GenerateData(size);
-            if (print == "y")
-            {
-                PrintArray(data);
-            }           
+            //if (print == "y")
+            //{
+            //    PrintArray(data);
+            //}           
             Console.WriteLine("Startar algoritmen");
             DateTime startTid = DateTime.Now;
 
             //Skriv in anropet till metoden här
-            int length = data.Length;
+            int length = data.Length;   
             Quicksort(data, 0, length - 1);
 
             TimeSpan deltaTid = DateTime.Now - startTid;
@@ -35,7 +37,6 @@ namespace Algorithm
                 PrintArray(data);
             }
             Console.WriteLine("Det tog {0:0.00} ms att sortera.\n", deltaTid.TotalMilliseconds);
-
             Console.ReadKey();
         }
         
