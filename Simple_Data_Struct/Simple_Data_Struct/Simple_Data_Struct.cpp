@@ -216,24 +216,41 @@ public:
 
 	bool RemoveAt(int index)
 	{
+		//Gets the difference between the two indexes 
+		//to get what numbers to save
+		int diff = (m_size - 1) - index;
 
+		int[] temp = new int[diff];
+		for (int i = diff - 1; i < m_size; i++)
+		{
+		}
 	}
 
 	bool Remove(T& element)
 	{
+		int n = sizeof(arr) / sizeof(arr[0]);
+		int index = Search(m_elements, 0, n - 1, x);
+
+		if (m_elements[index] == element)
+		{
+			RemoveAt(index);
+		}
+
 		ChangeArraySize(m_size - 1);
 	}
 
 	bool Remove()
 	{
+		T value = m_elements[m_size - 2];
 		if (ChangeArraySize(m_size - 1))
 		{
+			m_elements[m_size - 1] = value;
 			return true;
 		}
 		return false;
 	}
 
-	int Find(const T element)
+	int Search(const T element)
 	{
 		for (int i = 0; i < Size(); i++)
 		{
@@ -241,6 +258,29 @@ public:
 			{
 				return i;
 			}
+		}
+
+		return -1;
+	}
+	
+	int Search(T arr[], int left, int right, T x)
+	{
+		if (right >= left)
+		{
+			int middle = left + (right - left) / 2;
+
+			//Check if the element is in the middle
+			if (arr[middle] == x)
+			{
+				return middle;
+			}
+
+			if (arr[middle] > x)
+			{
+				return Search(arr, left, middle - 1, x);
+			}
+
+			return Search(arr, middle + 1, right, x);
 		}
 
 		return -1;
